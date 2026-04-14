@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YourApp</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0e0e0f;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #f4f4f5;
+    }
+
+    /* ── Nav ── */
+    nav {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 1.5rem 2rem;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .logo {
+      font-size: 18px;
+      font-weight: 500;
+      color: #f4f4f5;
+      letter-spacing: -0.3px;
+    }
+
+    /* ── Login box ── */
+    .login-box {
+      background: #18181b;
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 280px;
+    }
+
+    .login-box h2 {
+      font-size: 15px;
+      font-weight: 500;
+      color: #f4f4f5;
+      margin-bottom: 1rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 0.875rem;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: #71717a;
+    }
+
+    .field input {
+      background: #09090b;
+      border: 0.5px solid rgba(255, 255, 255, 0.1);
+      border-radius: 7px;
+      color: #f4f4f5;
+      font-size: 14px;
+      padding: 8px 11px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .field input::placeholder {
+      color: #3f3f46;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 9px;
+      background: #f4f4f5;
+      color: #09090b;
+      border: none;
+      border-radius: 7px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s;
+    }
+
+    .btn-login:hover {
+      background: #e4e4e7;
+    }
+
+    .btn-login:active {
+      transform: scale(0.98);
+    }
+
+    /* ── Main content ── */
+    main {
+      padding: 2rem;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #f4f4f5;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Listings grid ── */
+    .listings {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .listing-card {
+      background: #18181b;
+      border: 0.5px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .listing-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .listing-thumb {
+      width: 100%;
+      height: 110px;
+      background: #27272a;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .listing-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: #f4f4f5;
+      margin-bottom: 4px;
+    }
+
+    .listing-sub {
+      font-size: 12px;
+      color: #71717a;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">YourApp</div>
+
+    <div class="login-box">
+      <h2>Log in</h2>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com" />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••••••" />
+      </div>
+      <button class="btn-login" onclick="handleLogin()">Log in</button>
+    </div>
+  </nav>
+
+  <main>
+    <p class="section-title">Browse listings</p>
+    <div class="listings" id="listings-grid">
+      <!-- Listings will be injected here dynamically -->
+      <!-- Placeholder cards for now -->
+      <div class="listing-card">
+        <div class="listing-thumb"></div>
+        <p class="listing-title">Listing title</p>
+        <p class="listing-sub">Category · $00</p>
+      </div>
+      <div class="listing-card">
+        <div class="listing-thumb"></div>
+        <p class="listing-title">Listing title</p>
+        <p class="listing-sub">Category · $00</p>
+      </div>
+      <div class="listing-card">
+        <div class="listing-thumb"></div>
+        <p class="listing-title">Listing title</p>
+        <p class="listing-sub">Category · $00</p>
+      </div>
+      <div class="listing-card">
+        <div class="listing-thumb"></div>
+        <p class="listing-title">Listing title</p>
+        <p class="listing-sub">Category · $00</p>
+      </div>
+      <div class="listing-card">
+        <div class="listing-thumb"></div>
+        <p class="listing-title">Listing title</p>
+        <p class="listing-sub">Category · $00</p>
+      </div>
+      <div class="listing-card">
+        <div class="listing-thumb"></div>
+        <p class="listing-title">Listing title</p>
+        <p class="listing-sub">Category · $00</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function handleLogin() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      // TODO: wire up auth
+      console.log('Login attempt:', email);
+    }
+  </script>
+
+</body>
+</html>
