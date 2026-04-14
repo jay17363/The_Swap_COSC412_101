@@ -16,9 +16,10 @@ function handleLogin(){
         return;
     }
 
-    if (password.length <6)
+    if (password.length <6){
         showError('Password must be at least 6 characters');
         return;
+    }
 
     // TODO: send to Python backend
     // fetch('/api/login', {
