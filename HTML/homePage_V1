@@ -213,8 +213,8 @@
     </div>
   </main>
 
-  <script src="javaScript/auth_login.js"></script>   
-
+  <script src="../javaScript/auth_login.js"></script>   
+  <!-- ../ goes back out of the HTML folder -->
    
 
   </script>
