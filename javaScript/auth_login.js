@@ -1,3 +1,6 @@
+//error right now 
+// does not provide error when entering nothing into login box
+// hello in email field and anything in password should say please enter a valid email address
 function handleLogin(){
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
