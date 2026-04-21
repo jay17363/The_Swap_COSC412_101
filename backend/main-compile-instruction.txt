@@ -1,0 +1,23 @@
+1. in bash run this line: source venv/Scripts/activate
+    this should add venv at the bottom of your bash after you do a command (once activated)
+        only need to do this once (if you close bash you have to do it again)
+
+2. cd backend --> use cd to navigate to backend
+3. uvicorn main:app --reload --> in terminal type that line
+    should se something line    
+        Uvicorn running on http://127.0.0.1:8000
+            open that URL in your browser
+                then you should see {"message": "The Swap backend is running"}
+
+
+Notes:
+"GET / HTTP/1.1" 200 OK 
+    this is saying someone (you most likely right now) vistied the homepage "/" in the browser and it returned a success code of 200
+
+"GET /favicon.ico HTTP/1.1" 404 Not Found
+    the browser asked for a little tab icon (favicon or favorite icon), but we do not have one right now, so this is a 404
+        ignoreing 404 favicon for right now 4/21
+
+"GET / HTTP/1.1" 200 OK 
+    comes up again becuase you refreshed the page or something 
+        test this
