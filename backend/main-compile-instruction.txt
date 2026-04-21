@@ -11,6 +11,13 @@
 
 
 Notes:
+if you do not see 
+    (venv) PS C:\github --> or where ever you have your github folder
+        in the terminal of your code editor when you go to type in a command line you have done something wrong 
+            before more errors come up reset the terminal and make sure your venv is up to date 
+                and that you have activated it in your git bash 
+
+
 "GET / HTTP/1.1" 200 OK 
     this is saying someone (you most likely right now) vistied the homepage "/" in the browser and it returned a success code of 200
 
