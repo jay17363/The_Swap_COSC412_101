@@ -5,7 +5,7 @@
 2. cd backend --> use cd to navigate to backend
 3. uvicorn main:app --reload --> in terminal type that line
     should se something line    
-        Uvicorn running on http://127.0.0.1:8000
+        Uvicorn running on http://127.0.0.1:8000 and a bunch of other stuff
             open that URL in your browser
                 then you should see {"message": "The Swap backend is running"}
 
