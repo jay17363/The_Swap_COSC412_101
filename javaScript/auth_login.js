@@ -58,3 +58,50 @@ function showError(message){
     }
     err.textContent = message;
 }
+
+function toggle_signup(which){
+    if(which === 'signup'){
+        document.getElementById('login-form').style.display = 'none';
+        document.getElementById('signup-form').style.display = 'block';
+    }else{
+        document.getElementById('signup-form').style.display = 'none';
+        document.getElementById('login-form').style.display = 'block'; 
+    }
+}
+function handle_signup(){
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const confirm = document.getElementById('signup-confirm').value;
+
+    if (!email || !password || !confirm) {
+        show_signup_error('Please fill in all fields.');
+        return;
+    }if(!isValidEmail(email)){
+        show_signup_error('Please eneter a valid email address.');
+        return;
+    }if (password.length < 6) {
+        show_signup_error('Password must be at least 6 characters.');
+        return;
+    }if (!/[A-Z]/.test(password)) {
+        show_signup_error('Password must contain at least one uppercase letter.');
+        return;
+    }if (!/[0-9]/.test(password)) {
+        show_signup_error('Password must contain at least one number.');
+        return;
+    }if (!/[^A-Za-z0-9]/.test(password)) {
+        show_signup_error('Password must contain at least one special character.');
+        return;
+    }if(password !== confirm){
+        show_signup_error('Passwords do not match.');
+        return;
+    }
+    //TODO: send to python backend
+    console.log('signup Attempt: ', email);
+}
+
+function show_signup_error(message){
+    document.getElementById('signup-error').textContent = message;
+}
+
+
+
