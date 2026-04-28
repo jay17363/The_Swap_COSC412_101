@@ -1,15 +1,20 @@
 //error right now 
 // does not provide error when entering nothing into login box
 // hello in email field and anything in password should say please enter a valid email address
-function handleLogin(){
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+async function handleLogin(){
+    const emailField = document.getElementById('email');
+    const passwordField = document.getElementById('password');
 
     //basic validation
-    if(!email || !password){
+    //1. frontend valiadation (isntant feedback)
+
+    // FIX: Check if the boxes exist AND if they are empty
+    if(!emailField || !passwordField || !emailField.value || !passwordField.value){
         showError('Please fill in all fields');
         return;
     }
+    const email = emailField.value.trim();
+    const password = passwordField.value;
 
     if(!isValidEmail(email)){
         showError('Please enter a valid email');
@@ -20,20 +25,11 @@ function handleLogin(){
         showError('Password must be at least 8 characters');
         return;
     }
-
-    // TODO: send to Python backend
-    // fetch('/api/login', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ email, password })
-    // })
-    // .then(res => res.json())
-    // .then(data => {
-    //   if (data.success) window.location.href = '/dashboard';
-    //   else showError(data.message);
-    // });
+    //2. connect/send to backend
+    
     console.log('Login attempt: ', email);
 }
+
 function isValidEmail(email){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     //regex 
@@ -47,32 +43,39 @@ function isValidEmail(email){
 }
 
 function showError(message){
-    let err = document.getElementById('login-error');
+    const err = document.getElementById('login-error');
 
-    if(!err){
-        err= document.createElement('p');
-        err.id = 'login-error';
-        err.style.cssText = 'color: red; margin-top: 10px;';
-        document.querySelector('.login-box').appendChild(err);
+    if(err){
+        err.textContent = message; 
 
-    }
-    err.textContent = message;
-}
-
-function toggle_signup(which){
-    if(which === 'signup'){
-        document.getElementById('login-form').style.display = 'none';
-        document.getElementById('signup-form').style.display = 'block';
     }else{
-        document.getElementById('signup-form').style.display = 'none';
-        document.getElementById('login-form').style.display = 'block'; 
+        alert(message); //Fallback so you still see the error if HTML is broken
     }
 }
-function handle_signup(){
+
+// This function handles the "Switching" between Login and Signup views
+function toggle_signup(which){
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    
+    //check 'which' side the user wants to see
+    if(which === 'signup'){
+        // FIX: Use the variables you defined above
+        if(loginForm) loginForm.style.display = 'none';
+        if(signupForm) signupForm.style.display = 'block';
+    }else{
+        //hide signup, show login
+        if(signupForm) signupForm.style.display = 'none';
+        if(loginForm) loginForm.style.display = 'block'; 
+    }
+}
+
+// FIX: Added 'async' here so the 'await fetch' works
+async function handle_signup(){
     const email = document.getElementById('signup-email').value.trim();
     const password = document.getElementById('signup-password').value;
     const confirm = document.getElementById('signup-confirm').value;
-
+    // 1. frontend validation (instant feedback)
     if (!email || !password || !confirm) {
         show_signup_error('Please fill in all fields.');
         return;
@@ -95,13 +98,36 @@ function handle_signup(){
         show_signup_error('Passwords do not match.');
         return;
     }
-    //TODO: send to python backend
+    // 2. Connect/send to backend
+    try {
+        const response = await fetch('http://127.0.0.1:8000/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                email: email, 
+                password: password 
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert("Account created! You can now login.");
+            toggle_signup('login'); // Switch them back to login screen
+        } else {
+            show_signup_error(data.detail || "Signup failed");
+        }
+    } catch (error) {
+        show_signup_error("Could not connect to server. Is your Python backend running?");
+    }
     console.log('signup Attempt: ', email);
 }
 
 function show_signup_error(message){
-    document.getElementById('signup-error').textContent = message;
-}
-
-
-
+    const err = document.getElementById('signup-error');
+        if (err) {
+            err.textContent = message;
+        } else {
+            alert(message); //fall back
+        }
+    }
