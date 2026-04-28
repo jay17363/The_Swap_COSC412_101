@@ -27,7 +27,7 @@ class UserCreate(BaseModel):
             raise ValueError("Password must contain an uppercase letter")
         if not re.search(r"\d", the_password):
             raise ValueError("Passowrd most contain a number")
-        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]"):
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", the_password):
             raise ValueError("Password must contain a special character")
         return the_password
     

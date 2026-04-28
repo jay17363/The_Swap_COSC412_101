@@ -1,35 +1,37 @@
 //error right now 
 // does not provide error when entering nothing into login box
 // hello in email field and anything in password should say please enter a valid email address
-async function handleLogin(){
-    const emailField = document.getElementById('email');
-    const passwordField = document.getElementById('password');
+async function handleLogin() {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
-    //basic validation
-    //1. frontend valiadation (isntant feedback)
-
-    // FIX: Check if the boxes exist AND if they are empty
-    if(!emailField || !passwordField || !emailField.value || !passwordField.value){
+    if (!email || !password) {
         showError('Please fill in all fields');
         return;
     }
-    const email = emailField.value.trim();
-    const password = passwordField.value;
 
-    if(!isValidEmail(email)){
-        showError('Please enter a valid email');
-        return;
-    }
+    try {
+        const response = await fetch('http://127.0.0.1:8000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
 
-    if (password.length <8){
-        showError('Password must be at least 8 characters');
-        return;
+        const data = await response.json();
+
+        if (response.ok) {
+            // SUCCESS: Store the token and redirect
+            localStorage.setItem('token', data.access_token);
+            alert("Login successful!");
+        } else {
+            // ERROR: This handles "Invalid email or password" (401)
+            showError(data.detail || "Login failed");
+        }
+    } catch (error) {
+        // CONNECTION ERROR: This is what you see in your photo
+        showError("Could not connect to server. Is uvicorn running?");
     }
-    //2. connect/send to backend
-    
-    console.log('Login attempt: ', email);
 }
-
 function isValidEmail(email){
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     //regex 
