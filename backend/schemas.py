@@ -1,6 +1,9 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from datetime import datetime
+from typing import Optional
+
 import re
+
 
 #user schemas 
 
@@ -11,7 +14,8 @@ class UserCreate(BaseModel):
 
     password: str
 
-    display_name: str |None = None
+    display_name: Optional[str]=None 
+    #Oringal:::display_name: str |None = None
 
     @field_validator("password")
     @classmethod

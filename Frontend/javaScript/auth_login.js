@@ -75,6 +75,9 @@ async function handle_signup(){
     const email = document.getElementById('signup-email').value.trim();
     const password = document.getElementById('signup-password').value;
     const confirm = document.getElementById('signup-confirm').value;
+    
+    
+    const display_name = email.split('@')[0];
     // 1. frontend validation (instant feedback)
     if (!email || !password || !confirm) {
         show_signup_error('Please fill in all fields.');
@@ -105,7 +108,8 @@ async function handle_signup(){
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
                 email: email, 
-                password: password 
+                password: password, 
+                display_name: email.split('@')[0] //display name is everything to the left of the @ on your email
             })
         });
 

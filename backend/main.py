@@ -1,7 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-
+from fastapi.middleware.cors import CORSMiddleware
 from database import engine, get_db
+
 import buyBack as bb
 import schemas
 import authBack
@@ -11,6 +12,13 @@ bb.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="The Swap API")
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # allows all websites (good for development)
+    allow_credentials = True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
