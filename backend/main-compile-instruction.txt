@@ -28,3 +28,11 @@ if you do not see
 "GET / HTTP/1.1" 200 OK 
     comes up again becuase you refreshed the page or something 
         test this
+
+
+
+
+additonal notes:
+    get venv working in VS terminal
+    cd backend 
+    command: uvicorn main:app --reload

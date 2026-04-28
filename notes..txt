@@ -1,0 +1,8 @@
+for venv command to activate it:
+    Git Bash -> source venv/Scripts/activate
+
+    then (if venv isnt popping up in VS terminal)
+    VS terminal -> venv\Scripts\Activate 
+
+    for safety 
+    pip install -r requirements.txt
