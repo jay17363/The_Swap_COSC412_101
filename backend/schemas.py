@@ -45,7 +45,7 @@ class UserOut(BaseModel):
     is_admin: bool
     created_at: datetime
 
-    class config:
+    class Config:
         from_attributes = True  # lets Pydantic read from a SQLAlchemy object
 
 #token schemas

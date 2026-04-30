@@ -61,9 +61,9 @@ function toggle_signup(which){
     const signupForm = document.getElementById('signup-form');
     
     //check 'which' side the user wants to see
-    if(which === 'signup'){
+    if(which === 'signup'){ //which is the arg passed in the function for which type of button will be shown
         // FIX: Use the variables you defined above
-        if(loginForm) loginForm.style.display = 'none';
+        if(loginForm) loginForm.style.display = 'none';//make sure it exist and then block the login menu if we are trying to sign up and the same logic for if we are in login and hiding sign up
         if(signupForm) signupForm.style.display = 'block';
     }else{
         //hide signup, show login

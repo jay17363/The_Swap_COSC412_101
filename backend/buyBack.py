@@ -17,7 +17,7 @@ class User(Base):
 
 
     #one user can own many items 
-    ownership = relationship ("Ownership", back_populates="owner")
+    ownerships = relationship ("Ownership", back_populates="owner")
 
 
 class Product(Base):

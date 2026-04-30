@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from database import get_db
 from buyBack import User
+import bcrypt
 
 
 
@@ -16,8 +16,6 @@ SECRET_KEY = "kjjo-the-swap-dev-secret-change-me-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60  # token valid for 1 hour
 
-# Password hashing context
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # This tells FastAPI to look for a Bearer token in the Authorization header.
 # tokenUrl="login" is for the auto-generated /docs page.
@@ -28,13 +26,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def hash_password(password: str) -> str:
     """One-way hash a plain password for storage."""
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_pwd: str) -> bool:
     """Check if a plain password matches the stored hash."""
-    return pwd_context.verify(plain_password, hashed_pwd)
-
+    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_pwd.encode("utf-8"))
 
 # Token helpers 
 

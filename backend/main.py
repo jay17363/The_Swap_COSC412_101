@@ -2,6 +2,9 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, get_db
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
 
 import buyBack as bb
 import schemas
@@ -11,6 +14,13 @@ import authBack
 bb.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="The Swap API")
+
+
+app.mount("/static", StaticFiles(directory="../Frontend/javaScript"), name="static")
+
+@app.get("/home")
+def serve_home():
+    return FileResponse("../Frontend/HTML/homePage_V1.html")
 
 app.add_middleware(
     CORSMiddleware,
@@ -45,7 +55,7 @@ def register(user_in: schemas.UserCreate, db: Session = Depends(get_db)):
 
     new_user = bb.User(
         email=user_in.email,
-        hashed_pwd=authBack.hashed_pwd(user_in.password),
+        hashed_pwd=authBack.hash_password(user_in.password),
         display_name=user_in.display_name,
     )
     db.add(new_user)
