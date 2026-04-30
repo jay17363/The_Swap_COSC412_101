@@ -1,0 +1,660 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Swap</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0b;
+      --surface: #111113;
+      --surface2: #1a1a1d;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.18);
+      --text: #f0f0f1;
+      --muted: #6b6b74;
+      --accent: #4ade80; /* go-lang green */
+      --accent-dim: rgba(74,222,128,0.12);
+    }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+    }
+
+    /*  NAV  */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      border-bottom: 0.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,11,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+    }
+
+    /* Go-lang style gopher-ish logo mark */
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+
+    .logo-text span {
+      color: var(--accent);
+    }
+
+    /* Nav right side — auth area */
+    .nav-auth {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /*  Logged-OUT state: compact login inline in nav  */
+    #nav-loggedout {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-input {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 6px 10px;
+      outline: none;
+      width: 160px;
+      transition: border-color 0.15s, width 0.2s;
+    }
+
+    .nav-input:focus {
+      border-color: var(--border-hover);
+      width: 180px;
+    }
+
+    .nav-input::placeholder { color: #3f3f46; }
+
+    .btn-nav-login {
+      padding: 6px 14px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn-nav-login:hover { background: #d4d4d8; }
+    .btn-nav-login:active { transform: scale(0.97); }
+
+    .btn-nav-signup {
+      padding: 6px 14px;
+      background: transparent;
+      color: var(--muted);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .btn-nav-signup:hover { color: var(--text); border-color: var(--border-hover); }
+
+    .nav-divider {
+      width: 0.5px;
+      height: 18px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    #nav-login-error {
+      font-size: 11px;
+      color: #f87171;
+      white-space: nowrap;
+    }
+
+    /*  Logged-IN state nav  */
+    #nav-loggedin {
+      display: none;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link {
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .nav-link:hover { color: var(--text); background: var(--surface2); }
+
+    .nav-link-vault {
+      padding: 6px 12px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 0.5px solid rgba(74,222,128,0.2);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .nav-link-vault:hover { background: rgba(74,222,128,0.2); }
+
+    /* User pill */
+    .nav-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px 4px 6px;
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .nav-avatar {
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #0a0a0b;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .btn-logout {
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .btn-logout:hover { color: #f87171; border-color: rgba(248,113,113,0.3); }
+
+    /*  MODAL overlay for signup / full login  */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 0.5px solid var(--border-hover);
+      border-radius: 14px;
+      padding: 2rem;
+      width: 340px;
+      position: relative;
+      animation: modalIn 0.18s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 5px;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover { color: var(--text); }
+
+    .modal-box h2 {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 0.875rem;
+    }
+
+    .field label { font-size: 12px; color: var(--muted); }
+
+    .field input {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      padding: 8px 11px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .field input:focus { border-color: var(--border-hover); }
+    .field input::placeholder { color: #3f3f46; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 9px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 4px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-submit:hover { background: #d4d4d8; }
+    .btn-submit:active { transform: scale(0.98); }
+
+    .modal-footer {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .modal-footer a { color: var(--text); text-decoration: none; }
+    .modal-footer a:hover { text-decoration: underline; }
+
+    .form-error {
+      color: #f87171;
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+    }
+
+    /*  MAIN  */
+    main { padding: 2.5rem 2rem; }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.25rem;
+    }
+
+    /*  Listings grid  */
+    .listings {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .listing-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+
+    .listing-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .listing-thumb {
+      width: 100%;
+      height: 110px;
+      background: var(--surface2);
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .listing-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .listing-sub { font-size: 12px; color: var(--muted); }
+
+    .listing-buyback {
+      font-size: 11px;
+      color: var(--accent);
+      margin-top: 4px;
+      font-family: 'DM Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ NAV ══════════════ -->
+<nav>
+  <!-- Logo -->
+  <a class="logo" href="#">
+    <svg class="logo-mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Go-lang inspired circular gopher face -->
+      <circle cx="14" cy="14" r="13" fill="#1a1a1d" stroke="#4ade80" stroke-width="1"/>
+      <!-- eyes -->
+      <circle cx="10" cy="12" r="3.5" fill="#4ade80"/>
+      <circle cx="18" cy="12" r="3.5" fill="#4ade80"/>
+      <circle cx="11" cy="11.5" r="1.2" fill="#0a0a0b"/>
+      <circle cx="19" cy="11.5" r="1.2" fill="#0a0a0b"/>
+      <!-- smile -->
+      <path d="M9.5 17.5 Q14 21 18.5 17.5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <!-- nose -->
+      <ellipse cx="14" cy="15" rx="2" ry="1.2" fill="#4ade80" opacity="0.5"/>
+    </svg>
+    <span class="logo-text">the<span>swap</span></span>
+  </a>
+
+  <!-- Auth area -->
+  <div class="nav-auth">
+
+    <!-- LOGGED OUT: inline nav login -->
+    <div id="nav-loggedout">
+      <input class="nav-input" id="nav-email" type="email" placeholder="Email" />
+      <input class="nav-input" id="nav-password" type="password" placeholder="Password" />
+      <button class="btn-nav-login" onclick="handleNavLogin()">Log in</button>
+      <div class="nav-divider"></div>
+      <button class="btn-nav-signup" onclick="openModal('signup')">Sign up</button>
+      <span id="nav-login-error"></span>
+    </div>
+
+    <!-- LOGGED IN: user pill + links -->
+    <div id="nav-loggedin">
+      <a class="nav-link-vault" href="#">⬡ My Vault</a>
+      <a class="nav-link" href="#">Catalog</a>
+      <div class="nav-user-pill">
+        <div class="nav-avatar" id="nav-avatar">?</div>
+        <span id="nav-username">User</span>
+      </div>
+      <button class="btn-logout" onclick="handleLogout()">Log out</button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- ══════════════ SIGNUP MODAL ══════════════ -->
+<div class="modal-overlay" id="modal-signup">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('signup')">✕</button>
+    <h2>Create an account</h2>
+    <div class="field">
+      <label for="signup-email">Email</label>
+      <input id="signup-email" type="email" placeholder="you@example.com" />
+    </div>
+    <div class="field">
+      <label for="signup-password">Password</label>
+      <input id="signup-password" type="password" placeholder="Min 8 chars, uppercase, number, symbol" />
+    </div>
+    <div class="field">
+      <label for="signup-confirm">Confirm password</label>
+      <input id="signup-confirm" type="password" placeholder="••••••••" />
+    </div>
+    <button class="btn-submit" onclick="handle_signup()">Create account</button>
+    <p id="signup-error" class="form-error"></p>
+    <p class="modal-footer">Already have an account? <a href="#" onclick="switchModal('signup','login')">Log in</a></p>
+  </div>
+</div>
+
+<!-- ══════════════ FULL LOGIN MODAL (fallback) ══════════════ -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('login')">✕</button>
+    <h2>Log in</h2>
+    <div class="field">
+      <label for="modal-email">Email</label>
+      <input id="modal-email" type="email" placeholder="you@example.com" />
+    </div>
+    <div class="field">
+      <label for="modal-password">Password</label>
+      <input id="modal-password" type="password" placeholder="••••••••" />
+    </div>
+    <button class="btn-submit" onclick="handleModalLogin()">Log in</button>
+    <p id="modal-login-error" class="form-error"></p>
+    <p class="modal-footer">Don't have an account? <a href="#" onclick="switchModal('login','signup')">Sign up</a></p>
+  </div>
+</div>
+
+<!-- ══════════════ MAIN CONTENT ══════════════ -->
+<main>
+  <p class="section-title">Featured listings</p>
+  <div class="listings" id="listings-grid">
+    <div class="listing-card">
+      <div class="listing-thumb"></div>
+      <p class="listing-title">Listing title</p>
+      <p class="listing-sub">Category · $00</p>
+      <p class="listing-buyback">↩ Buy-back est. $00</p>
+    </div>
+    <div class="listing-card">
+      <div class="listing-thumb"></div>
+      <p class="listing-title">Listing title</p>
+      <p class="listing-sub">Category · $00</p>
+      <p class="listing-buyback">↩ Buy-back est. $00</p>
+    </div>
+    <div class="listing-card">
+      <div class="listing-thumb"></div>
+      <p class="listing-title">Listing title</p>
+      <p class="listing-sub">Category · $00</p>
+      <p class="listing-buyback">↩ Buy-back est. $00</p>
+    </div>
+    <div class="listing-card">
+      <div class="listing-thumb"></div>
+      <p class="listing-title">Listing title</p>
+      <p class="listing-sub">Category · $00</p>
+      <p class="listing-buyback">↩ Buy-back est. $00</p>
+    </div>
+    <div class="listing-card">
+      <div class="listing-thumb"></div>
+      <p class="listing-title">Listing title</p>
+      <p class="listing-sub">Category · $00</p>
+      <p class="listing-buyback">↩ Buy-back est. $00</p>
+    </div>
+    <div class="listing-card">
+      <div class="listing-thumb"></div>
+      <p class="listing-title">Listing title</p>
+      <p class="listing-sub">Category · $00</p>
+      <p class="listing-buyback">↩ Buy-back est. $00</p>
+    </div>
+  </div>
+</main>
+
+<script src="/static/auth_login.js"></script>
+<script>
+  //  Modal helpers 
+  function openModal(which) {
+    document.getElementById('modal-' + which).classList.add('open');
+  }
+  function closeModal(which) {
+    document.getElementById('modal-' + which).classList.remove('open');
+  }
+  function switchModal(from, to) {
+    closeModal(from);
+    openModal(to);
+  }
+
+  // Close modal if clicking outside the box
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  });
+
+  //  Nav login (inline in nav bar) 
+  async function handleNavLogin() {
+    const email = document.getElementById('nav-email').value.trim();
+    const password = document.getElementById('nav-password').value;
+    const errEl = document.getElementById('nav-login-error');
+    errEl.textContent = '';
+
+    if (!email || !password) { errEl.textContent = 'Fill in both fields'; return; }
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('user_email', email);
+        setLoggedIn(email);
+      } else {
+        errEl.textContent = data.detail || 'Invalid credentials';
+      }
+    } catch {
+      errEl.textContent = 'Server offline';
+    }
+  }
+
+  //  Modal login 
+  async function handleModalLogin() {
+    const email = document.getElementById('modal-email').value.trim();
+    const password = document.getElementById('modal-password').value;
+    const errEl = document.getElementById('modal-login-error');
+    errEl.textContent = '';
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        localStorage.setItem('token', data.access_token);
+        localStorage.setItem('user_email', email);
+        closeModal('login');
+        setLoggedIn(email);
+      } else {
+        errEl.textContent = data.detail || 'Invalid credentials';
+      }
+    } catch {
+      errEl.textContent = 'Server offline';
+    }
+  }
+
+  //  Switch nav to logged-in state 
+  function setLoggedIn(email) {
+    const initials = email.charAt(0).toUpperCase();
+    const username = email.split('@')[0];
+    document.getElementById('nav-avatar').textContent = initials;
+    document.getElementById('nav-username').textContent = username;
+    document.getElementById('nav-loggedout').style.display = 'none';
+    document.getElementById('nav-loggedin').style.display = 'flex';
+  }
+
+  //  Log out 
+  function handleLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_email');
+    document.getElementById('nav-loggedout').style.display = 'flex';
+    document.getElementById('nav-loggedin').style.display = 'none';
+    document.getElementById('nav-email').value = '';
+    document.getElementById('nav-password').value = '';
+  }
+
+
+  // Load products from backend 
+async function loadProducts() {
+  try {
+    const response = await fetch('http://127.0.0.1:8000/products');
+    const products = await response.json();
+    const grid = document.getElementById('listings-grid');
+    grid.innerHTML = ''; // clear placeholders
+
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'listing-card';
+      card.innerHTML = `
+        <div class="listing-thumb"></div>
+        <p class="listing-title">${p.name}</p>
+        <p class="listing-sub">${p.category} · $${p.price.toFixed(2)}</p>
+        <p class="listing-sub" style="margin-top:3px;">Condition: ${p.condition}</p>
+        <p class="listing-buyback">↩ Buy-back est. $${(p.price * 0.6).toFixed(2)}</p>
+      `;
+      grid.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error('Could not load products:', err);
+  }
+}
+
+// Call it when the page loads
+window.addEventListener('DOMContentLoaded', () => {
+  const token = localStorage.getItem('token');
+  const email = localStorage.getItem('user_email');
+  if (token && email) setLoggedIn(email);
+  loadProducts(); // load products regardless of login state
+});
+</script>
+</body>
+</html>

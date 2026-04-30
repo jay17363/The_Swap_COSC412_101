@@ -1,0 +1,33 @@
+1. User Registration & Authentication (FR#1, FR#2, FR#3, FR#5)
+   - New account creation with email and password
+   - Password validation (length, uppercase, number, special character)
+   - Secure login and session creation
+   - To Be Decided: Have a secure way for admins to log in separately from users.
+
+2. Product Catalog (FR#8, FR#9, FR#10, FR#11, FR#12)
+   - Browsable catalog organized by category (baby gear, power tools, seasonal equipment)
+   - Keyword search and category filter
+   - Product detail page with name, description, condition, price, and estimated buy-back value
+   - Availability status displayed per listing
+
+3. Buy-Back Algorithm (FR#23, FR#24)
+   - Automated buy-back quote calculation based on purchase date, category, and condition
+   - Instant quote returned without admin review
+
+4. User Vault (FR#16, FR#17, FR#20)
+   - Personalized dashboard showing all items owned by the logged-in user
+   - Current estimated buy-back value displayed per item
+   - Vault credit balance displayed
+
+5. Shopping & Checkout – Stretch Goal, If Time permits, lowest priority (FR#15, FR#41, FR#42)
+   - Add items to cart and proceed to checkout
+   - Order summary and confirmation screen
+   - Purchased items written to the database and reflected in the User Vault
+Database Coverage:
+All four core feature areas will involve database writes and reads: user accounts, product listings, item ownership records, and buy-back calculations will all be stored and retrieved via SQLite through SQLAlchemy for the prototype.
+Repository & Environment:
+We will be hosting the project on GitHub with all team members committed to the repository. Per our SRS, the backend will use a Python virtual environment (venv) with a requirements.txt for consistent dependency management across the team. Please let us know if this setup aligns with your expectations before we finalize the repo structure.
+Out of Scope for This Sprint:
+Admin panel, peer-to-peer swaps, payment gateway integration, cash-out functionality, and email verification. These will be noted as future-phase features consistent with our SRS.
+Tech Stack:
+Frontend: JavaScript + Tailwind CSS | Backend: Python + FastAPI | Database: SQLite via SQLAlchemy

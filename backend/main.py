@@ -16,11 +16,13 @@ bb.Base.metadata.create_all(bind=engine)
 app = FastAPI(title="The Swap API")
 
 
+
+
 app.mount("/static", StaticFiles(directory="../Frontend/javaScript"), name="static")
 
 @app.get("/home")
 def serve_home():
-    return FileResponse("../Frontend/HTML/homePage_V1.html")
+    return FileResponse("../Frontend/HTML/homePage_V2.html")
 
 app.add_middleware(
     CORSMiddleware,
@@ -82,3 +84,7 @@ def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
 def read_current_user(current_user: bb.User = Depends(authBack.get_current_user)):
     """Returns info about the currently logged-in user. Useful for testing the token works."""
     return current_user
+
+@app.get("/products")
+def get_products(db: Session = Depends(get_db)):
+    return db.query(bb.Product).filter(bb.Product.is_available == True).all()
