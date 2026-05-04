@@ -6,7 +6,8 @@
   <title>The Swap — Catalog</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    /* ── Design tokens (matches homePage_V2.html exactly) ── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
     :root {
       --bg:           #0a0a0b;
       --surface:      #111113;
@@ -18,8 +19,6 @@
       --accent:       #4ade80;
       --accent-dim:   rgba(74,222,128,0.12);
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background: var(--bg);
@@ -53,7 +52,8 @@
     }
     .logo-text span { color: var(--accent); }
 
-    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-auth { display: flex; align-items: center; gap: 8px; }
+
     .nav-link {
       padding: 6px 12px;
       background: transparent;
@@ -69,6 +69,60 @@
     .nav-link:hover { color: var(--text); background: var(--surface2); }
     .nav-link.active { color: var(--text); background: var(--surface2); }
 
+    .nav-link-vault {
+      padding: 6px 12px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 0.5px solid rgba(74,222,128,0.2);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-link-vault:hover { background: rgba(74,222,128,0.2); }
+
+    .nav-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px 4px 6px;
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .nav-avatar {
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #0a0a0b;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .btn-logout {
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-logout:hover { color: #f87171; border-color: rgba(248,113,113,0.3); }
+
     /* ── MAIN ── */
     main { padding: 2.5rem 2rem; max-width: 1200px; margin: 0 auto; }
 
@@ -76,15 +130,9 @@
     .page-heading h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
     .page-heading p  { font-size: 13px; color: var(--muted); }
 
-    /* ── TOOLBAR: search + condition filter ── */
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 1.25rem;
-    }
+    /* ── TOOLBAR ── */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.25rem; }
 
-    /* Search — FR#9 */
     .search-wrap { position: relative; flex: 1; min-width: 200px; }
     .search-wrap svg {
       position: absolute;
@@ -108,7 +156,6 @@
     #search-input:focus { border-color: var(--border-hover); }
     #search-input::placeholder { color: #3f3f46; }
 
-    /* Condition filter — FR#9 */
     .filter-select {
       background: var(--surface);
       border: 0.5px solid var(--border);
@@ -124,7 +171,7 @@
     .filter-select:focus,
     .filter-select:hover { border-color: var(--border-hover); color: var(--text); }
 
-    /* ── CATEGORY PILLS — FR#8 ── */
+    /* ── CATEGORY PILLS ── */
     .cat-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
     .cat-pill {
       padding: 5px 14px;
@@ -147,7 +194,6 @@
       font-weight: 600;
     }
 
-    /* Results count */
     .results-bar {
       display: flex;
       align-items: center;
@@ -163,14 +209,13 @@
     }
     #results-count { font-size: 12px; color: var(--muted); }
 
-    /* ── GRID — FR#8 ── */
+    /* ── GRID ── */
     .listings {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: 1rem;
     }
 
-    /* ── CARD — FR#8, FR#11, FR#12 ── */
     .listing-card {
       background: var(--surface);
       border: 0.5px solid var(--border);
@@ -182,7 +227,6 @@
     }
     .listing-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
 
-    /* FR#12 — availability badge */
     .avail-badge {
       position: absolute;
       top: 10px; right: 10px;
@@ -190,7 +234,6 @@
       font-weight: 600;
       padding: 2px 8px;
       border-radius: 20px;
-      letter-spacing: 0.2px;
     }
     .badge-in  { background: rgba(74,222,128,0.15); color: #4ade80; }
     .badge-out { background: rgba(248,113,113,0.15); color: #f87171; }
@@ -216,7 +259,6 @@
       font-family: 'DM Mono', monospace;
     }
 
-    /* Empty state */
     .catalog-empty {
       display: none;
       text-align: center;
@@ -225,11 +267,10 @@
       font-size: 14px;
     }
 
-    /* Skeleton loader */
     .skeleton { animation: pulse 1.4s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-    /* ── PRODUCT DETAIL MODAL — FR#10 ── */
+    /* ── PRODUCT DETAIL MODAL ── */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -270,7 +311,6 @@
     }
     .modal-close:hover { color: var(--text); }
 
-    /* Detail layout — FR#10 */
     .detail-thumb {
       width: 100%;
       height: 150px;
@@ -289,7 +329,6 @@
       text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
     }
 
-    /* FR#12 — availability in detail modal */
     .detail-avail-badge {
       display: inline-block;
       font-size: 10px; font-weight: 600;
@@ -309,10 +348,8 @@
     .detail-row span:first-child { color: var(--muted); }
     .detail-row span:last-child  { font-weight: 500; }
 
-    /* FR#11 — buy-back value highlighted */
     .buyback-value { color: var(--accent); font-family: 'DM Mono', monospace; }
 
-    /* savings hint */
     .savings-hint {
       margin-top: 8px; padding: 8px 10px;
       background: var(--accent-dim); border-radius: 7px;
@@ -350,14 +387,20 @@
     </svg>
     <span class="logo-text">the<span>swap</span></span>
   </a>
-  <div class="nav-right">
-    <a class="nav-link" href="/">Home</a>
+
+  <div class="nav-auth">
+    <a class="nav-link-vault" href="/vault">⬡ My Vault</a>
     <a class="nav-link active" href="/catalog">Catalog</a>
-    <a class="nav-link" href="/vault">⬡ My Vault</a>
+    <a class="nav-link" href="/">Home</a>
+    <div class="nav-user-pill">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-username">User</span>
+    </div>
+    <button class="btn-logout" onclick="handleLogout()">Log out</button>
   </div>
 </nav>
 
-<!-- ── PRODUCT DETAIL MODAL — FR#10 ── -->
+<!-- ── PRODUCT DETAIL MODAL ── -->
 <div class="modal-overlay" id="modal-product">
   <div class="modal-box">
     <button class="modal-close" onclick="closeDetail()">✕</button>
@@ -374,7 +417,6 @@
       <span>Condition</span>
       <span id="detail-condition"></span>
     </div>
-    <!-- FR#11 — estimated buy-back value -->
     <div class="detail-row">
       <span>Est. buy-back value</span>
       <span class="buyback-value" id="detail-buyback"></span>
@@ -391,7 +433,6 @@
     <p>Every item shows your guaranteed buy-back value before you buy.</p>
   </div>
 
-  <!-- Search + condition filter — FR#9 -->
   <div class="toolbar">
     <div class="search-wrap">
       <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -408,7 +449,6 @@
     </select>
   </div>
 
-  <!-- Category pills — FR#8 -->
   <div class="cat-pills">
     <button class="cat-pill active" data-cat="" onclick="selectCat(this)">All items</button>
     <button class="cat-pill" data-cat="baby gear"          onclick="selectCat(this)">🍼 Baby gear</button>
@@ -416,13 +456,11 @@
     <button class="cat-pill" data-cat="seasonal equipment" onclick="selectCat(this)">🌿 Seasonal</button>
   </div>
 
-  <!-- Results bar -->
   <div class="results-bar">
     <span class="section-label" id="section-label">All items</span>
     <span id="results-count"></span>
   </div>
 
-  <!-- Grid — FR#8 -->
   <div class="listings" id="listings-grid"></div>
   <div class="catalog-empty" id="catalog-empty">No items match your search.</div>
 </main>
@@ -430,7 +468,6 @@
 <script>
   const API = 'http://127.0.0.1:8000';
 
-  // Buy-back rates per category — FR#11
   const BUYBACK_RATES = {
     'baby gear':          0.60,
     'power tools':        0.65,
@@ -446,7 +483,23 @@
   let allProducts = [];
   let activeCat   = '';
 
-  // ── Load from existing GET /products endpoint ──────────────────────────────
+  // ── Nav: set username from localStorage ──
+  window.addEventListener('DOMContentLoaded', () => {
+    const email = localStorage.getItem('user_email');
+    if (email) {
+      document.getElementById('nav-avatar').textContent  = email.charAt(0).toUpperCase();
+      document.getElementById('nav-username').textContent = email.split('@')[0];
+    }
+    loadProducts();
+  });
+
+  function handleLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_email');
+    window.location.href = '/';
+  }
+
+  // ── Load products ──
   async function loadProducts() {
     renderSkeletons();
     try {
@@ -471,27 +524,22 @@
       </div>`).join('');
   }
 
-  // ── Category pill selection — FR#8 ────────────────────────────────────────
   function selectCat(el) {
     document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
     el.classList.add('active');
     activeCat = el.dataset.cat;
     document.getElementById('section-label').textContent =
-      activeCat
-        ? activeCat.charAt(0).toUpperCase() + activeCat.slice(1)
-        : 'All items';
+      activeCat ? activeCat.charAt(0).toUpperCase() + activeCat.slice(1) : 'All items';
     applyFilters();
   }
 
-  // ── Filter + render — FR#9 ─────────────────────────────────────────────────
   function applyFilters() {
     const q    = document.getElementById('search-input').value.trim().toLowerCase();
     const cond = document.getElementById('filter-condition').value.toLowerCase();
 
     const filtered = allProducts.filter(p => {
       const catOk  = !activeCat || p.category.toLowerCase() === activeCat;
-      const qOk    = !q || p.name.toLowerCase().includes(q)
-                       || (p.description || '').toLowerCase().includes(q);
+      const qOk    = !q || p.name.toLowerCase().includes(q) || (p.description || '').toLowerCase().includes(q);
       const condOk = !cond || p.condition.toLowerCase() === cond;
       return catOk && qOk && condOk;
     });
@@ -499,7 +547,6 @@
     renderGrid(filtered);
   }
 
-  // ── Render grid — FR#8, FR#11, FR#12 ──────────────────────────────────────
   function renderGrid(products) {
     const grid  = document.getElementById('listings-grid');
     const empty = document.getElementById('catalog-empty');
@@ -507,7 +554,7 @@
       products.length + ' item' + (products.length !== 1 ? 's' : '');
 
     if (products.length === 0) {
-      grid.innerHTML      = '';
+      grid.innerHTML = '';
       empty.style.display = 'block';
       return;
     }
@@ -518,9 +565,8 @@
       const buyback  = (p.price * rate).toFixed(2);
       const pct      = Math.round(rate * 100);
       const emoji    = CAT_EMOJI[p.category.toLowerCase()] || '📦';
-      const inStock  = p.is_available;
-      const badgeCls = inStock ? 'badge-in' : 'badge-out';
-      const badgeTxt = inStock ? 'In stock'  : 'Out of stock';
+      const badgeCls = p.is_available ? 'badge-in' : 'badge-out';
+      const badgeTxt = p.is_available ? 'In stock'  : 'Out of stock';
       const encoded  = encodeURIComponent(JSON.stringify(p));
 
       return `
@@ -535,7 +581,6 @@
     }).join('');
   }
 
-  // ── Product detail modal — FR#10 ───────────────────────────────────────────
   function openDetail(encoded) {
     const p       = JSON.parse(decodeURIComponent(encoded));
     const rate    = BUYBACK_RATES[p.category.toLowerCase()] ?? 0.60;
@@ -551,8 +596,7 @@
     document.getElementById('detail-price').textContent     = '$' + p.price.toFixed(2);
     document.getElementById('detail-condition').textContent = p.condition;
     document.getElementById('detail-buyback').textContent   = '$' + buyback;
-    document.getElementById('detail-savings').textContent   =
-      `↩ Recover ${pct}% — your effective cost is $${net}`;
+    document.getElementById('detail-savings').textContent   = `↩ Recover ${pct}% — your effective cost is $${net}`;
 
     const availEl       = document.getElementById('detail-avail');
     availEl.textContent = p.is_available ? 'In stock' : 'Out of stock';
@@ -572,9 +616,6 @@
   document.getElementById('modal-product').addEventListener('click', function(e) {
     if (e.target === this) closeDetail();
   });
-
-  // ── Boot ───────────────────────────────────────────────────────────────────
-  window.addEventListener('DOMContentLoaded', loadProducts);
 </script>
 </body>
 </html>
