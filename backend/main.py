@@ -23,6 +23,7 @@ app.mount("/static", StaticFiles(directory="../Frontend/javaScript"), name="stat
 @app.get("/home")
 def serve_home():
     return FileResponse("../Frontend/HTML/homePage_V2.html")
+
 # this is for the catalog
 @app.get("/catalog")
 def serve_catalog():
