@@ -1,8 +1,21 @@
+
+#each one of the imports maps to a database column type
+#column: defines a table column, of any type listed
+#foreignkey: links one table to another (ownership links users to products)
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean
+
+# relationship() lets us access related records as Python objects
+#i.e. user.ownerships gives us all ownership records for that user
 from sqlalchemy.orm import relationship
+
+#used to set defualt timestamps 
+#timezone.utc ensures all timestamps are stored in UTC not local time
 from datetime import datetime, timezone
+
+#parent class all our table models inherit from it
 from database import Base
 
+#stores every registered account on the platform
 class User(Base):
     __tablename__ = "users"
 
@@ -19,7 +32,7 @@ class User(Base):
     #one user can own many items 
     ownerships = relationship ("Ownership", back_populates="owner")
 
-
+#stores every item listed in the catalog
 class Product(Base):
     __tablename__ = "products"
 
@@ -36,7 +49,7 @@ class Product(Base):
     #same thing
     ownerships = relationship("Ownership", back_populates="product")
 
-
+#records that a specific user owns a speific product - gives power to user valut 
 class Ownership(Base):
     """Records that user X owns a specific instance of product Y. Powers the User Vault."""
 
@@ -52,6 +65,7 @@ class Ownership(Base):
     product = relationship("Product", back_populates="ownerships")
     quotes = relationship("BuyBackQuote", back_populates="ownership")
 
+#logs evey buy back calculation for debugging and dispute resolution 
 class BuyBackQuote(Base):
     """Logs every buy-back calculation (FR#28: log every quote for debugging)."""
 
@@ -61,7 +75,8 @@ class BuyBackQuote(Base):
     ownership_id = Column(Integer, ForeignKey("ownerships.id"), nullable=False)
     quote_amount = Column(Float, nullable=False)
     calculated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
-    # Inputs used, stored as plain strings for the log
+    
+    # inputs fed into the buy-back algorithm - stored so we can audit any quote later
     input_category = Column(String)
     input_condition = Column(String)
     input_age_days = Column(Integer)
