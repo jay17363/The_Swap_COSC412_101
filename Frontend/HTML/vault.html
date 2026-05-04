@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Swap — My Vault</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0b;
+      --surface: #111113;
+      --surface2: #1a1a1d;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.18);
+      --text: #f0f0f1;
+      --muted: #6b6b74;
+      --accent: #4ade80;
+      --accent-dim: rgba(74,222,128,0.12);
+    }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      border-bottom: 0.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,11,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .logo-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .logo-text span { color: var(--accent); }
+
+    .nav-auth { display: flex; align-items: center; gap: 8px; }
+
+    .nav-link {
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--surface2); }
+
+    .nav-link-vault {
+      padding: 6px 12px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 0.5px solid rgba(74,222,128,0.2);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .nav-link-vault:hover { background: rgba(74,222,128,0.2); }
+
+    .nav-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px 4px 6px;
+      background: var(--surface2);
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .nav-avatar {
+      width: 22px;
+      height: 22px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #0a0a0b;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .btn-logout {
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-logout:hover { color: #f87171; border-color: rgba(248,113,113,0.3); }
+
+    /* ── NOT LOGGED IN STATE ── */
+    #not-logged-in {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem;
+      text-align: center;
+      gap: 12px;
+    }
+    #not-logged-in p { color: var(--muted); font-size: 14px; }
+    .btn-go-home {
+      padding: 8px 20px;
+      background: var(--text);
+      color: var(--bg);
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: 8px;
+    }
+
+    /* ── MAIN ── */
+    main { padding: 2.5rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+    .page-heading { margin-bottom: 2rem; }
+    .page-heading h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .page-heading p  { font-size: 13px; color: var(--muted); }
+
+    /* ── VAULT CREDIT BANNER — FR#20 ── */
+    .credit-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--accent-dim);
+      border: 0.5px solid rgba(74,222,128,0.2);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .credit-label {
+      font-size: 12px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .credit-amount {
+      font-family: 'DM Mono', monospace;
+      font-size: 28px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .credit-hint {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ── SECTION TITLE ── */
+    .section-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1.25rem;
+    }
+
+    /* ── VAULT ITEMS GRID — FR#16, FR#17 ── */
+    .vault-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    .vault-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .vault-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+    .vault-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .vault-card-emoji {
+      width: 44px;
+      height: 44px;
+      background: var(--surface2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .vault-condition-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: capitalize;
+    }
+    .cond-like-new { background: rgba(74,222,128,0.15); color: #4ade80; }
+    .cond-good     { background: rgba(250,204,21,0.15);  color: #facc15; }
+    .cond-fair     { background: rgba(248,113,113,0.15); color: #f87171; }
+
+    .vault-card-name {
+      font-size: 15px;
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .vault-card-category {
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 1rem;
+    }
+
+    .vault-card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 7px 0;
+      border-top: 0.5px solid var(--border);
+      font-size: 12px;
+    }
+    .vault-card-row span:first-child { color: var(--muted); }
+    .vault-card-row span:last-child  { font-weight: 500; font-family: 'DM Mono', monospace; }
+
+    .buyback-highlight { color: var(--accent); }
+
+    /* action buttons */
+    .vault-card-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    .btn-buyback {
+      flex: 1;
+      padding: 7px;
+      background: var(--accent);
+      color: #0a0a0b;
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-buyback:hover { opacity: 0.85; }
+
+    .btn-swap {
+      flex: 1;
+      padding: 7px;
+      background: transparent;
+      color: var(--muted);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .btn-swap:hover { color: var(--text); border-color: var(--border-hover); }
+
+    /* empty state */
+    .vault-empty {
+      display: none;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* skeleton */
+    .skeleton { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="logo" href="/">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="13" fill="#1a1a1d" stroke="#4ade80" stroke-width="1"/>
+      <circle cx="10" cy="12" r="3.5" fill="#4ade80"/>
+      <circle cx="18" cy="12" r="3.5" fill="#4ade80"/>
+      <circle cx="11" cy="11.5" r="1.2" fill="#0a0a0b"/>
+      <circle cx="19" cy="11.5" r="1.2" fill="#0a0a0b"/>
+      <path d="M9.5 17.5 Q14 21 18.5 17.5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <ellipse cx="14" cy="15" rx="2" ry="1.2" fill="#4ade80" opacity="0.5"/>
+    </svg>
+    <span class="logo-text">the<span>swap</span></span>
+  </a>
+
+  <div class="nav-auth">
+    <a class="nav-link-vault" href="/vault">⬡ My Vault</a>
+    <a class="nav-link" href="/catalog">Catalog</a>
+    <a class="nav-link" href="/">Home</a>
+    <div class="nav-user-pill">
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <span id="nav-username">User</span>
+    </div>
+    <button class="btn-logout" onclick="handleLogout()">Log out</button>
+  </div>
+</nav>
+
+<!-- ── NOT LOGGED IN ── -->
+<div id="not-logged-in">
+  <p>You need to be logged in to view your Vault.</p>
+  <a class="btn-go-home" href="/">Go to Home</a>
+</div>
+
+<!-- ── MAIN VAULT CONTENT ── -->
+<main id="vault-main">
+  <div class="page-heading">
+    <h1>My Vault</h1>
+    <p>All your items and their current buy-back values.</p>
+  </div>
+
+  <!-- FR#20 — Vault credit balance -->
+  <div class="credit-banner">
+    <div>
+      <p class="credit-label">Vault Credit</p>
+      <p class="credit-amount" id="vault-credit">$0.00</p>
+    </div>
+    <p class="credit-hint">Apply at checkout or<br>cash out anytime</p>
+  </div>
+
+  <!-- FR#16 — owned items -->
+  <p class="section-title">Your Items</p>
+  <div class="vault-grid" id="vault-grid"></div>
+  <div class="vault-empty" id="vault-empty">You don't own any items yet. <a href="/catalog" style="color:var(--accent)">Browse the catalog</a> to get started.</div>
+</main>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+
+  const CAT_EMOJI = {
+    'baby gear':          '🍼',
+    'power tools':        '🔧',
+    'seasonal equipment': '🌿',
+  };
+
+  // ── Check login on load ──
+  window.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('user_email');
+
+    if (!token || !email) {
+      // not logged in — show message, hide vault
+      document.getElementById('vault-main').style.display = 'none';
+      document.getElementById('not-logged-in').style.display = 'flex';
+      return;
+    }
+
+    // logged in — set nav and load vault
+    const initials = email.charAt(0).toUpperCase();
+    const username = email.split('@')[0];
+    document.getElementById('nav-avatar').textContent = initials;
+    document.getElementById('nav-username').textContent = username;
+
+    loadVault(token);
+  });
+
+  // ── Fetch vault data from /api/vault — FR#16, FR#17, FR#20 ──
+  async function loadVault(token) {
+    renderSkeletons();
+    try {
+      const res = await fetch(`${API}/api/vault`, {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      if (res.status === 401) {
+        // token expired
+        localStorage.removeItem('token');
+        localStorage.removeItem('user_email');
+        document.getElementById('vault-main').style.display = 'none';
+        document.getElementById('not-logged-in').style.display = 'flex';
+        return;
+      }
+
+      const data = await res.json();
+
+      // FR#20 — show vault credit
+      document.getElementById('vault-credit').textContent = '$' + data.vault_credit.toFixed(2);
+
+      renderVault(data.items);
+
+    } catch (err) {
+      console.error('Could not load vault:', err);
+      document.getElementById('vault-grid').innerHTML = '<p style="color:var(--muted);font-size:13px">Could not connect to server.</p>';
+    }
+  }
+
+  // ── Render vault items — FR#16, FR#17 ──
+  function renderVault(items) {
+    const grid  = document.getElementById('vault-grid');
+    const empty = document.getElementById('vault-empty');
+
+    if (items.length === 0) {
+      grid.innerHTML      = '';
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    grid.innerHTML = items.map(item => {
+      const emoji       = CAT_EMOJI[item.category.toLowerCase()] || '📦';
+      const purchaseDate = new Date(item.purchase_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      const net         = (item.purchase_price - item.buyback_value).toFixed(2);
+
+      // condition badge class
+      const condClass = {
+        'like-new': 'cond-like-new',
+        'good':     'cond-good',
+        'fair':     'cond-fair',
+      }[item.condition.toLowerCase()] || 'cond-good';
+
+      return `
+        <div class="vault-card">
+          <div class="vault-card-header">
+            <div class="vault-card-emoji">${emoji}</div>
+            <span class="vault-condition-badge ${condClass}">${item.condition}</span>
+          </div>
+          <p class="vault-card-name">${item.name}</p>
+          <p class="vault-card-category">${item.category}</p>
+          <div class="vault-card-row">
+            <span>Purchased</span>
+            <span>${purchaseDate}</span>
+          </div>
+          <div class="vault-card-row">
+            <span>Paid</span>
+            <span>$${item.purchase_price.toFixed(2)}</span>
+          </div>
+          <div class="vault-card-row">
+            <span>Buy-back value</span>
+            <span class="buyback-highlight">$${item.buyback_value.toFixed(2)}</span>
+          </div>
+          <div class="vault-card-row">
+            <span>Effective cost</span>
+            <span>$${net}</span>
+          </div>
+          <div class="vault-card-actions">
+            <button class="btn-buyback">↩ Buy Back</button>
+            <button class="btn-swap">⇄ Swap Out</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Skeleton loader ──
+  function renderSkeletons() {
+    document.getElementById('vault-grid').innerHTML = Array(3).fill(0).map(() => `
+      <div class="vault-card skeleton">
+        <div style="height:44px;width:44px;background:var(--surface2);border-radius:8px;margin-bottom:1rem"></div>
+        <div style="height:15px;background:var(--surface2);border-radius:4px;margin-bottom:8px"></div>
+        <div style="height:11px;background:var(--surface2);border-radius:4px;width:50%;margin-bottom:1rem"></div>
+        <div style="height:11px;background:var(--surface2);border-radius:4px;margin-bottom:6px"></div>
+        <div style="height:11px;background:var(--surface2);border-radius:4px;margin-bottom:6px"></div>
+        <div style="height:11px;background:var(--surface2);border-radius:4px"></div>
+      </div>`).join('');
+  }
+
+  // ── Log out ──
+  function handleLogout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_email');
+    window.location.href = '/';
+  }
+</script>
+</body>
+</html>
