@@ -725,11 +725,12 @@ async function loadProducts() {
     const grid = document.getElementById('listings-grid');
     grid.innerHTML = ''; // clear placeholders
 
-    products.forEach(p => {
+    //changed this so only first 4 show up and not entire catalog
+    products.slice(0, 5).forEach(p => {
       const card = document.createElement('div');
       card.className = 'listing-card';
       card.style.cursor = 'pointer';
-      card.onclick = () => openProductDetail(p);  
+      card.onclick = () => openProductDetail(p);
 
       card.innerHTML = `
         <div class="listing-thumb"></div>
