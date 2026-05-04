@@ -45,7 +45,7 @@ Run this once to add ownership records for the demo account:
 ### 6. Start the server
 - uvicorn main:app --reload
 
-You should see: `Application startup complete.`
+You should see: `INFO: Application startup complete.` at the bottom
 
 ### 7. Open the app
 Go to your browser and visit:
