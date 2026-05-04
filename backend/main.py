@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import engine, get_db
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from datetime import datetime, timezone
 
 
 import buyBack as bb
@@ -90,3 +91,53 @@ def read_current_user(current_user: bb.User = Depends(authBack.get_current_user)
 @app.get("/products")
 def get_products(db: Session = Depends(get_db)):
     return db.query(bb.Product).filter(bb.Product.is_available == True).all()
+
+#/vault servers the HTML page 
+@app.get("/vault")
+def serve_vault():
+    return FileResponse("../Frontend/HTML/vault.html")
+
+#/api/vault returns json data from the DB
+@app.get("/api/vault")
+def get_vault (current_user: bb.User = Depends(authBack.get_current_user), db: Session = Depends(get_db)):
+    #fr met for all items owned by the logged-in user with buy-back values
+    ownerships = db.query(bb.Ownership).filter(bb.Ownership.user_id == current_user.id).all()
+
+    result = []
+    for o in ownerships:
+        product = db.query(bb.Product).filter(bb.Product.id == o.product_id).first()
+
+
+        #buy back rates per catergory FR met
+
+        rates = {
+            "baby gear": 0.60,
+            "power tools": 0.65,
+            "seasonal equipment": 0.55,
+        }
+        condition_multiplier = {
+            "like-new": 1.0,
+            "good":     0.85,
+            "fair":     0.65,
+        }
+        rate = rates.get(product.category.lower(), 0.60)
+        age_days = (datetime.now(timezone.utc) - o.purchase_date.replace(tzinfo=timezone.utc)).days
+        multiplier = condition_multiplier.get(o.current_condition.lower(), 0.85)
+        buyback_value = round(product.price * rate * multiplier * max(0.5, 1 - (age_days / 365) *0.2), 2)
+
+        result.append({
+            "ownership_id": o.id,
+            "product_id": product.id,
+            "name": product.name,
+            "category": product.category,
+            "condition": o.current_condition,
+            "purchase_price": o.purchase_price,
+            "purchase_date": o.purchase_date.isoformat(),
+            "buyback_value": buyback_value,
+        })
+
+        #dict returned but FastAPI converts it to json 
+    return { 
+        "vault_credit": current_user.vault_credit,
+        "items": result
+    }
