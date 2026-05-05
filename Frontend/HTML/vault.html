@@ -27,7 +27,7 @@
       color: var(--text);
     }
 
-    /* ── NAV ── */
+    /*  NAV  */
     nav {
       display: flex;
       align-items: center;
@@ -122,7 +122,7 @@
     }
     .btn-logout:hover { color: #f87171; border-color: rgba(248,113,113,0.3); }
 
-    /* ── NOT LOGGED IN STATE ── */
+    /*  NOT LOGGED IN STATE  */
     #not-logged-in {
       display: none;
       flex-direction: column;
@@ -147,14 +147,14 @@
       margin-top: 8px;
     }
 
-    /* ── MAIN ── */
+    /*  MAIN  */
     main { padding: 2.5rem 2rem; max-width: 1100px; margin: 0 auto; }
 
     .page-heading { margin-bottom: 2rem; }
     .page-heading h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
     .page-heading p  { font-size: 13px; color: var(--muted); }
 
-    /* ── VAULT CREDIT BANNER — FR#20 ── */
+    /*  VAULT CREDIT BANNER — FR#20  */
     .credit-banner {
       display: flex;
       align-items: center;
@@ -188,7 +188,7 @@
       text-align: right;
     }
 
-    /* ── SECTION TITLE ── */
+    /*  SECTION TITLE  */
     .section-title {
       font-size: 13px;
       font-weight: 500;
@@ -198,7 +198,7 @@
       margin-bottom: 1.25rem;
     }
 
-    /* ── VAULT ITEMS GRID — FR#16, FR#17 ── */
+    /*  VAULT ITEMS GRID — FR#16, FR#17  */
     .vault-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -323,7 +323,7 @@
 </head>
 <body>
 
-<!-- ── NAV ── -->
+<!--  NAV  -->
 <nav>
   <a class="logo" href="/">
     <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
@@ -350,13 +350,13 @@
   </div>
 </nav>
 
-<!-- ── NOT LOGGED IN ── -->
+<!--  NOT LOGGED IN  -->
 <div id="not-logged-in">
   <p>You need to be logged in to view your Vault.</p>
   <a class="btn-go-home" href="/">Go to Home</a>
 </div>
 
-<!-- ── MAIN VAULT CONTENT ── -->
+<!--  MAIN VAULT CONTENT  -->
 <main id="vault-main">
   <div class="page-heading">
     <h1>My Vault</h1>
@@ -387,7 +387,7 @@
     'seasonal equipment': '🌿',
   };
 
-  // ── Check login on load ──
+  //  Check login on load 
   window.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('user_email');
@@ -408,7 +408,7 @@
     loadVault(token);
   });
 
-  // ── Fetch vault data from /api/vault — FR#16, FR#17, FR#20 ──
+  //  Fetch vault data from /api/vault — FR#16, FR#17, FR#20 
   async function loadVault(token) {
     renderSkeletons();
     try {
@@ -438,7 +438,7 @@
     }
   }
 
-  // ── Render vault items — FR#16, FR#17 ──
+  //  Render vault items — FR#16, FR#17 
   function renderVault(items) {
     const grid  = document.getElementById('vault-grid');
     const empty = document.getElementById('vault-empty');
@@ -495,7 +495,7 @@
     }).join('');
   }
 
-  // ── Skeleton loader ──
+  //  Skeleton loader 
   function renderSkeletons() {
     document.getElementById('vault-grid').innerHTML = Array(3).fill(0).map(() => `
       <div class="vault-card skeleton">
@@ -508,7 +508,7 @@
       </div>`).join('');
   }
 
-  // ── Log out ──
+  //  Log out 
   function handleLogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user_email');

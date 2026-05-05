@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Swap — Catalog</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Design tokens (matches homePage_V2.html exactly) ── */
+    :root {
+      --bg:           #0a0a0b;
+      --surface:      #111113;
+      --surface2:     #1a1a1d;
+      --border:       rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.18);
+      --text:         #f0f0f1;
+      --muted:        #6b6b74;
+      --accent:       #4ade80;
+      --accent-dim:   rgba(74,222,128,0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      min-height: 100vh;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 56px;
+      border-bottom: 0.5px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(10,10,11,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+    .logo-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .logo-text span { color: var(--accent); }
+
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+    .nav-link {
+      padding: 6px 12px;
+      background: transparent;
+      color: var(--muted);
+      border: none;
+      border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--surface2); }
+    .nav-link.active { color: var(--text); background: var(--surface2); }
+
+    /* ── MAIN ── */
+    main { padding: 2.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+
+    .page-heading { margin-bottom: 2rem; }
+    .page-heading h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .page-heading p  { font-size: 13px; color: var(--muted); }
+
+    /* ── TOOLBAR: search + condition filter ── */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Search — FR#9 */
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-wrap svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    #search-input {
+      width: 100%;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 8px 10px 8px 32px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    #search-input:focus { border-color: var(--border-hover); }
+    #search-input::placeholder { color: #3f3f46; }
+
+    /* Condition filter — FR#9 */
+    .filter-select {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 7px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .filter-select:focus,
+    .filter-select:hover { border-color: var(--border-hover); color: var(--text); }
+
+    /* ── CATEGORY PILLS — FR#8 ── */
+    .cat-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    .cat-pill {
+      padding: 5px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      border: 0.5px solid var(--border);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .cat-pill:hover { border-color: var(--border-hover); color: var(--text); }
+    .cat-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0a0a0b;
+      font-weight: 600;
+    }
+
+    /* Results count */
+    .results-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .section-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    #results-count { font-size: 12px; color: var(--muted); }
+
+    /* ── GRID — FR#8 ── */
+    .listings {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── CARD — FR#8, FR#11, FR#12 ── */
+    .listing-card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s, transform 0.15s;
+      position: relative;
+    }
+    .listing-card:hover { border-color: var(--border-hover); transform: translateY(-2px); }
+
+    /* FR#12 — availability badge */
+    .avail-badge {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: 0.2px;
+    }
+    .badge-in  { background: rgba(74,222,128,0.15); color: #4ade80; }
+    .badge-out { background: rgba(248,113,113,0.15); color: #f87171; }
+
+    .listing-thumb {
+      width: 100%;
+      height: 110px;
+      background: var(--surface2);
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+    }
+
+    .listing-title  { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .listing-sub    { font-size: 12px; color: var(--muted); }
+    .listing-buyback {
+      font-size: 11px;
+      color: var(--accent);
+      margin-top: 5px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* Empty state */
+    .catalog-empty {
+      display: none;
+      text-align: center;
+      padding: 4rem 1rem;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Skeleton loader */
+    .skeleton { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* ── PRODUCT DETAIL MODAL — FR#10 ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: var(--surface);
+      border: 0.5px solid var(--border-hover);
+      border-radius: 14px;
+      padding: 2rem;
+      width: 420px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      animation: modalIn 0.18s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: none; border: none;
+      color: var(--muted);
+      font-size: 18px; cursor: pointer;
+      line-height: 1; padding: 2px 6px;
+      border-radius: 5px;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--text); }
+
+    /* Detail layout — FR#10 */
+    .detail-thumb {
+      width: 100%;
+      height: 150px;
+      background: var(--surface2);
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 54px;
+    }
+
+    .detail-name     { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+    .detail-category {
+      font-size: 12px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px;
+    }
+
+    /* FR#12 — availability in detail modal */
+    .detail-avail-badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 20px; margin-bottom: 1rem;
+    }
+
+    .detail-desc { font-size: 14px; color: #a1a1aa; line-height: 1.6; margin-bottom: 1.25rem; }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 0.5px solid var(--border);
+      font-size: 13px;
+    }
+    .detail-row span:first-child { color: var(--muted); }
+    .detail-row span:last-child  { font-weight: 500; }
+
+    /* FR#11 — buy-back value highlighted */
+    .buyback-value { color: var(--accent); font-family: 'DM Mono', monospace; }
+
+    /* savings hint */
+    .savings-hint {
+      margin-top: 8px; padding: 8px 10px;
+      background: var(--accent-dim); border-radius: 7px;
+      font-size: 12px; color: var(--accent); font-family: 'DM Mono', monospace;
+    }
+
+    .btn-purchase {
+      width: 100%; padding: 10px;
+      background: var(--accent); color: #0a0a0b;
+      border: none; border-radius: 7px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      margin-top: 1.25rem; transition: opacity 0.15s;
+    }
+    .btn-purchase:hover { opacity: 0.85; }
+    .btn-purchase:disabled {
+      background: var(--surface2); color: var(--muted);
+      cursor: not-allowed; opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="logo" href="/">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <circle cx="14" cy="14" r="13" fill="#1a1a1d" stroke="#4ade80" stroke-width="1"/>
+      <circle cx="10" cy="12" r="3.5" fill="#4ade80"/>
+      <circle cx="18" cy="12" r="3.5" fill="#4ade80"/>
+      <circle cx="11" cy="11.5" r="1.2" fill="#0a0a0b"/>
+      <circle cx="19" cy="11.5" r="1.2" fill="#0a0a0b"/>
+      <path d="M9.5 17.5 Q14 21 18.5 17.5" stroke="#4ade80" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+      <ellipse cx="14" cy="15" rx="2" ry="1.2" fill="#4ade80" opacity="0.5"/>
+    </svg>
+    <span class="logo-text">the<span>swap</span></span>
+  </a>
+  <div class="nav-right">
+    <a class="nav-link" href="/">Home</a>
+    <a class="nav-link active" href="/catalog">Catalog</a>
+    <a class="nav-link" href="/vault">⬡ My Vault</a>
+  </div>
+</nav>
+
+<!-- ── PRODUCT DETAIL MODAL — FR#10 ── -->
+<div class="modal-overlay" id="modal-product">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeDetail()">✕</button>
+    <div class="detail-thumb" id="detail-thumb"></div>
+    <p class="detail-name"     id="detail-name"></p>
+    <p class="detail-category" id="detail-category"></p>
+    <span class="detail-avail-badge" id="detail-avail"></span>
+    <p class="detail-desc"     id="detail-desc"></p>
+    <div class="detail-row">
+      <span>Price</span>
+      <span id="detail-price"></span>
+    </div>
+    <div class="detail-row">
+      <span>Condition</span>
+      <span id="detail-condition"></span>
+    </div>
+    <!-- FR#11 — estimated buy-back value -->
+    <div class="detail-row">
+      <span>Est. buy-back value</span>
+      <span class="buyback-value" id="detail-buyback"></span>
+    </div>
+    <div class="savings-hint" id="detail-savings"></div>
+    <button class="btn-purchase" id="btn-purchase">Add to Cart</button>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+  <div class="page-heading">
+    <h1>Product Catalog</h1>
+    <p>Every item shows your guaranteed buy-back value before you buy.</p>
+  </div>
+
+  <!-- Search + condition filter — FR#9 -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <circle cx="7" cy="7" r="5" stroke="#6b6b74" stroke-width="1.5"/>
+        <path d="M11 11l3 3" stroke="#6b6b74" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Search items…" oninput="applyFilters()" />
+    </div>
+    <select class="filter-select" id="filter-condition" onchange="applyFilters()">
+      <option value="">All conditions</option>
+      <option value="like-new">Like-new</option>
+      <option value="good">Good</option>
+      <option value="fair">Fair</option>
+    </select>
+  </div>
+
+  <!-- Category pills — FR#8 -->
+  <div class="cat-pills">
+    <button class="cat-pill active" data-cat="" onclick="selectCat(this)">All items</button>
+    <button class="cat-pill" data-cat="baby gear"          onclick="selectCat(this)">🍼 Baby gear</button>
+    <button class="cat-pill" data-cat="power tools"        onclick="selectCat(this)">🔧 Power tools</button>
+    <button class="cat-pill" data-cat="seasonal equipment" onclick="selectCat(this)">🌿 Seasonal</button>
+  </div>
+
+  <!-- Results bar -->
+  <div class="results-bar">
+    <span class="section-label" id="section-label">All items</span>
+    <span id="results-count"></span>
+  </div>
+
+  <!-- Grid — FR#8 -->
+  <div class="listings" id="listings-grid"></div>
+  <div class="catalog-empty" id="catalog-empty">No items match your search.</div>
+</main>
+
+<script>
+  const API = 'http://127.0.0.1:8000';
+
+  // Buy-back rates per category — FR#11
+  const BUYBACK_RATES = {
+    'baby gear':          0.60,
+    'power tools':        0.65,
+    'seasonal equipment': 0.55,
+  };
+
+  const CAT_EMOJI = {
+    'baby gear':          '🍼',
+    'power tools':        '🔧',
+    'seasonal equipment': '🌿',
+  };
+
+  let allProducts = [];
+  let activeCat   = '';
+
+  // ── Load from existing GET /products endpoint ──────────────────────────────
+  async function loadProducts() {
+    renderSkeletons();
+    try {
+      const res = await fetch(`${API}/products`);
+      if (!res.ok) throw new Error('Server error');
+      allProducts = await res.json();
+      applyFilters();
+    } catch (err) {
+      document.getElementById('listings-grid').innerHTML = '';
+      const empty = document.getElementById('catalog-empty');
+      empty.style.display = 'block';
+      empty.textContent = 'Could not connect to the server. Make sure the backend is running.';
+    }
+  }
+
+  function renderSkeletons() {
+    document.getElementById('listings-grid').innerHTML = Array(6).fill(0).map(() => `
+      <div class="listing-card skeleton">
+        <div class="listing-thumb" style="background:var(--surface2)"></div>
+        <div style="height:14px;background:var(--surface2);border-radius:4px;margin-bottom:8px"></div>
+        <div style="height:11px;background:var(--surface2);border-radius:4px;width:65%"></div>
+      </div>`).join('');
+  }
+
+  // ── Category pill selection — FR#8 ────────────────────────────────────────
+  function selectCat(el) {
+    document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    activeCat = el.dataset.cat;
+    document.getElementById('section-label').textContent =
+      activeCat
+        ? activeCat.charAt(0).toUpperCase() + activeCat.slice(1)
+        : 'All items';
+    applyFilters();
+  }
+
+  // ── Filter + render — FR#9 ─────────────────────────────────────────────────
+  function applyFilters() {
+    const q    = document.getElementById('search-input').value.trim().toLowerCase();
+    const cond = document.getElementById('filter-condition').value.toLowerCase();
+
+    const filtered = allProducts.filter(p => {
+      const catOk  = !activeCat || p.category.toLowerCase() === activeCat;
+      const qOk    = !q || p.name.toLowerCase().includes(q)
+                       || (p.description || '').toLowerCase().includes(q);
+      const condOk = !cond || p.condition.toLowerCase() === cond;
+      return catOk && qOk && condOk;
+    });
+
+    renderGrid(filtered);
+  }
+
+  // ── Render grid — FR#8, FR#11, FR#12 ──────────────────────────────────────
+  function renderGrid(products) {
+    const grid  = document.getElementById('listings-grid');
+    const empty = document.getElementById('catalog-empty');
+    document.getElementById('results-count').textContent =
+      products.length + ' item' + (products.length !== 1 ? 's' : '');
+
+    if (products.length === 0) {
+      grid.innerHTML      = '';
+      empty.style.display = 'block';
+      return;
+    }
+    empty.style.display = 'none';
+
+    grid.innerHTML = products.map(p => {
+      const rate     = BUYBACK_RATES[p.category.toLowerCase()] ?? 0.60;
+      const buyback  = (p.price * rate).toFixed(2);
+      const pct      = Math.round(rate * 100);
+      const emoji    = CAT_EMOJI[p.category.toLowerCase()] || '📦';
+      const inStock  = p.is_available;
+      const badgeCls = inStock ? 'badge-in' : 'badge-out';
+      const badgeTxt = inStock ? 'In stock'  : 'Out of stock';
+      const encoded  = encodeURIComponent(JSON.stringify(p));
+
+      return `
+        <div class="listing-card" onclick="openDetail('${encoded}')">
+          <span class="avail-badge ${badgeCls}">${badgeTxt}</span>
+          <div class="listing-thumb">${emoji}</div>
+          <p class="listing-title">${p.name}</p>
+          <p class="listing-sub">${p.category} · $${p.price.toFixed(2)}</p>
+          <p class="listing-sub" style="margin-top:3px;text-transform:capitalize">${p.condition}</p>
+          <p class="listing-buyback">↩ Buy-back est. $${buyback} (${pct}%)</p>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Product detail modal — FR#10 ───────────────────────────────────────────
+  function openDetail(encoded) {
+    const p       = JSON.parse(decodeURIComponent(encoded));
+    const rate    = BUYBACK_RATES[p.category.toLowerCase()] ?? 0.60;
+    const buyback = (p.price * rate).toFixed(2);
+    const pct     = Math.round(rate * 100);
+    const net     = (p.price - parseFloat(buyback)).toFixed(2);
+    const emoji   = CAT_EMOJI[p.category.toLowerCase()] || '📦';
+
+    document.getElementById('detail-thumb').textContent     = emoji;
+    document.getElementById('detail-name').textContent      = p.name;
+    document.getElementById('detail-category').textContent  = p.category;
+    document.getElementById('detail-desc').textContent      = p.description || 'No description available.';
+    document.getElementById('detail-price').textContent     = '$' + p.price.toFixed(2);
+    document.getElementById('detail-condition').textContent = p.condition;
+    document.getElementById('detail-buyback').textContent   = '$' + buyback;
+    document.getElementById('detail-savings').textContent   =
+      `↩ Recover ${pct}% — your effective cost is $${net}`;
+
+    const availEl       = document.getElementById('detail-avail');
+    availEl.textContent = p.is_available ? 'In stock' : 'Out of stock';
+    availEl.className   = 'detail-avail-badge ' + (p.is_available ? 'badge-in' : 'badge-out');
+
+    const btn       = document.getElementById('btn-purchase');
+    btn.disabled    = !p.is_available;
+    btn.textContent = p.is_available ? 'Add to Cart' : 'Out of stock';
+
+    document.getElementById('modal-product').classList.add('open');
+  }
+
+  function closeDetail() {
+    document.getElementById('modal-product').classList.remove('open');
+  }
+
+  document.getElementById('modal-product').addEventListener('click', function(e) {
+    if (e.target === this) closeDetail();
+  });
+
+  // ── Boot ───────────────────────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', loadProducts);
+</script>
+</body>
+</html>
