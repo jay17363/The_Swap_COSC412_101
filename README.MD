@@ -24,6 +24,7 @@ A web platform that lets users buy short-term-use items like baby gear and power
 ### 2. Activate the virtual environment
 Open PowerShell/VS terminal and run:
 - Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+- python -m venv venv
 - .\venv\Scripts\activate
 
 You should see `(venv)` at the start of your terminal line.
